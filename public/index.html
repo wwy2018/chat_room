@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+    *{margin: 0;padding: 0;box-sizing: border-box;}
+    html,body{height: 100%;}
+    .main{width: 400px;height: 100%;overflow: hidden;border: 1px solid rgba(0, 0, 0, 0.3);margin: 0 auto;position: relative;padding-bottom: 45px;}
+    #contentBox{height: 100%;}
+    #inBox{width: 100%;height: 45px;position: absolute;bottom: 0;border:none;box-shadow: 0 0 1px gray;outline: none;font-size: 20px;padding: 5px;}
+  </style>
+</head>
+<body>
+  <div class="main">
+    <div id="contentBox">
+
+    </div>
+    <input type="text" id="inBox">
+  </div>
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.0/socket.io.js"></script>
+  <script>
+    const inBox=document.getElementById('inBox')
+    const contentBox=document.getElementById('contentBox')
+    const socket= io()
+    inBox.addEventListener('keyup', function(e){
+      if (e.keyCode == 13) {
+        const val=inBox.value
+        if (val.trim()) {
+          socket.emit('newmsg', {msg: val.trim()})
+          inBox.value = ''
+          createFrag(val)
+        }
+      }
+    })
+    function createFrag(text){
+      var frag=document.createDocumentFragment()
+      var div=document.createElement('div')
+      div.innerText=text
+      frag.appendChild(div)
+      contentBox.appendChild(frag)
+    }
+    socket.on('broadmsg', function(data){
+      createFrag(data.msg)
+    })
+    
+  </script>
+</body>
+</html>
